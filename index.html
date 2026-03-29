@@ -20,6 +20,7 @@
       --grey: #777770;
       --green: #3a9e5f;
       --blue: #3a6ea5;
+      --red: #9e3a3a;
     }
 
     html { scroll-behavior: smooth; }
@@ -87,7 +88,7 @@
 
     .ticker-track {
       display: inline-block;
-      animation: scroll 28s linear infinite;
+      animation: scroll 30s linear infinite;
     }
 
     .ticker-track span {
@@ -237,11 +238,11 @@
     /* ── PRODUCTS ── */
     .products {
       padding: 80px 48px;
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
-    .products-label {
+    .section-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       letter-spacing: 3px;
@@ -251,7 +252,7 @@
       text-align: center;
     }
 
-    .products-title {
+    .section-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(36px, 5vw, 60px);
       letter-spacing: 2px;
@@ -260,24 +261,24 @@
       margin-bottom: 56px;
     }
 
-    .products-title span { color: var(--gold); }
+    .section-title span { color: var(--gold); }
 
-    /* Side by side grid */
+    /* Three column grid */
     .products-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 900px) {
       .products-grid { grid-template-columns: 1fr; }
     }
 
     .product {
       background: var(--card);
-      padding: 48px 40px;
+      padding: 40px 32px;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -287,7 +288,6 @@
 
     .product:hover { background: #141414; }
 
-    /* Top accent line */
     .product::after {
       content: '';
       position: absolute;
@@ -298,11 +298,12 @@
       transition: transform 0.4s ease;
     }
 
-    .product.live::after { background: var(--green); }
-    .product.wip::after  { background: var(--blue); }
+    .product.live::after  { background: var(--green); }
+    .product.wip::after   { background: var(--blue); }
+    .product.soon::after  { background: var(--red); }
     .product:hover::after { transform: scaleX(1); }
 
-    /* Status pill */
+    /* Status badge */
     .status {
       display: inline-flex;
       align-items: center;
@@ -313,7 +314,7 @@
       text-transform: uppercase;
       padding: 5px 12px;
       border: 1px solid;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       width: fit-content;
     }
 
@@ -323,7 +324,10 @@
       background: rgba(58,158,95,0.05);
     }
 
-    .status.live .sdot { background: var(--green); animation: pulse 2s infinite; }
+    .status.live .sdot {
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
 
     .status.wip {
       color: var(--blue);
@@ -333,16 +337,24 @@
 
     .status.wip .sdot { background: var(--blue); }
 
+    .status.soon {
+      color: var(--red);
+      border-color: rgba(158,58,58,0.25);
+      background: rgba(158,58,58,0.05);
+    }
+
+    .status.soon .sdot { background: var(--red); }
+
     .sdot {
       width: 6px; height: 6px;
       border-radius: 50%;
     }
 
-    .product-icon { font-size: 32px; margin-bottom: 16px; }
+    .product-icon { font-size: 30px; margin-bottom: 14px; }
 
     .product-name {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 36px;
+      font-size: 30px;
       letter-spacing: 2px;
       color: var(--white);
       margin-bottom: 6px;
@@ -350,17 +362,17 @@
 
     .product-handle {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--gold);
       letter-spacing: 1px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .product-desc {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--grey);
       line-height: 1.85;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       flex: 1;
     }
 
@@ -369,33 +381,36 @@
     /* Feature list */
     .features {
       list-style: none;
-      margin-bottom: 36px;
+      margin-bottom: 32px;
       border-top: 1px solid var(--border);
-      padding-top: 24px;
+      padding-top: 20px;
     }
 
     .features li {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--grey);
-      padding: 8px 0;
+      padding: 7px 0;
       border-bottom: 1px solid var(--border);
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
+      line-height: 1.5;
     }
 
     .features li:last-child { border-bottom: none; }
-    .features li .check { color: var(--gold); font-size: 12px; }
-    .features li .wip-icon { color: var(--blue); font-size: 11px; }
+    .features li .icon { flex-shrink: 0; margin-top: 1px; }
+    .live-icon  { color: var(--green); }
+    .wip-icon   { color: var(--blue); }
+    .soon-icon  { color: var(--red); }
 
-    /* Product CTA */
+    /* CTA button */
     .product-cta {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      padding: 13px 24px;
+      padding: 12px 22px;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
@@ -414,50 +429,108 @@
       transform: translateY(-1px);
     }
 
-    .product-cta.soon {
-      color: var(--blue);
-      border: 1px solid rgba(58,110,165,0.3);
+    .product-cta.coming {
+      color: var(--grey);
+      border: 1px solid var(--border);
       cursor: default;
-      opacity: 0.7;
     }
 
     /* ── DIVIDER ── */
-    .divider {
+    hr.div {
       border: none;
       border-top: 1px solid var(--border);
       margin: 0 48px;
     }
 
-    /* ── ORIGIN ── */
-    .origin {
+    /* ── WHY SECTION ── */
+    .why {
       padding: 80px 48px;
       max-width: 700px;
       margin: 0 auto;
       text-align: center;
     }
 
-    .origin-label {
+    .why-text {
+      font-size: 15px;
+      color: var(--grey);
+      line-height: 1.95;
+    }
+
+    .why-text strong { color: var(--white); font-weight: 500; }
+
+    /* ── HARDWARE CTA ── */
+    .hardware {
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 48px;
+      text-align: center;
+    }
+
+    .hardware-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--gold);
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
-    .origin-text {
-      font-size: 16px;
+    .hardware-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .hardware-sub {
+      font-size: 13px;
       color: var(--grey);
-      line-height: 1.9;
+      max-width: 500px;
+      margin: 0 auto 28px;
+      line-height: 1.7;
     }
 
-    .origin-text strong { color: var(--white); font-weight: 500; }
+    .hw-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hw-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      text-decoration: none;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+      transition: all 0.2s;
+    }
+
+    .hw-btn:hover {
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
+    }
+
+    .hw-note {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--grey);
+      letter-spacing: 1px;
+      margin-top: 14px;
+      opacity: 0.6;
+    }
 
     /* ── CTA STRIP ── */
     .cta-strip {
-      border-top: 1px solid var(--border);
       padding: 80px 48px;
       text-align: center;
+      border-top: 1px solid var(--border);
       position: relative;
       overflow: hidden;
     }
@@ -477,7 +550,7 @@
       font-size: clamp(36px, 6vw, 64px);
       letter-spacing: 3px;
       color: var(--white);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .cta-title span { color: var(--gold); }
@@ -485,14 +558,14 @@
     .cta-sub {
       font-size: 14px;
       color: var(--grey);
-      margin-bottom: 36px;
+      margin-bottom: 32px;
       line-height: 1.7;
     }
 
     .socials {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 16px;
       flex-wrap: wrap;
       margin-top: 28px;
     }
@@ -551,11 +624,12 @@
     @media (max-width: 768px) {
       nav { padding: 16px 24px; }
       .products { padding: 60px 20px; }
-      .product { padding: 36px 28px; }
-      .origin { padding: 60px 24px; }
+      .product { padding: 32px 24px; }
+      .why { padding: 60px 24px; }
+      .hardware { padding: 48px 24px; }
       .cta-strip { padding: 60px 24px; }
       footer { padding: 20px 24px; flex-direction: column; }
-      .divider { margin: 0 24px; }
+      hr.div { margin: 0 24px; }
     }
   </style>
 </head>
@@ -617,78 +691,120 @@
 
 <!-- PRODUCTS -->
 <section class="products" id="products">
-  <p class="products-label reveal">What We're Building</p>
-  <h2 class="products-title reveal">OUR <span>PRODUCTS</span></h2>
+  <p class="section-label reveal">What We're Building</p>
+  <h2 class="section-title reveal">OUR <span>PRODUCTS</span></h2>
 
   <div class="products-grid">
 
-    <!-- PRODUCT 1: BOT — LIVE -->
+    <!-- 1: BOT — LIVE -->
     <div class="product live reveal">
       <div class="status live"><span class="sdot"></span> Live Now</div>
       <div class="product-icon">🤖</div>
       <div class="product-name">LSTP Bot</div>
       <div class="product-handle">@LSTProtocolBot on Telegram</div>
       <p class="product-desc">
-        A free Telegram bot that protects you at every step of a crypto transaction. Check any token, wallet address, link or group — and get an instant safety score powered by real blockchain data and AI.
+        A free Telegram bot that gives you an instant safety score on any crypto token, wallet address, link or group — powered by real blockchain data and AI analysis.
         <br><br>
         <strong>No signup. No wallet connection. Just type a command.</strong>
       </p>
       <ul class="features">
-        <li><span class="check">→</span> /check [token] — Safety score + verified contracts</li>
-        <li><span class="check">→</span> /checkgroup @name — Fake group detection</li>
-        <li><span class="check">→</span> /address [wallet] — Address poisoning check</li>
-        <li><span class="check">→</span> /link [url] — Phishing link scanner</li>
-        <li><span class="check">→</span> /report — Report a scam to community</li>
-        <li><span class="check">→</span> Data from CoinGecko + DexScreener</li>
+        <li><span class="icon live-icon">→</span> Token safety score out of 100</li>
+        <li><span class="icon live-icon">→</span> Verified contract addresses</li>
+        <li><span class="icon live-icon">→</span> Fake Telegram group detection</li>
+        <li><span class="icon live-icon">→</span> Phishing link scanner</li>
+        <li><span class="icon live-icon">→</span> Wallet address poisoning check</li>
+        <li><span class="icon live-icon">→</span> Data from CoinGecko + DexScreener</li>
       </ul>
       <a href="https://t.me/LSTProtocolBot" target="_blank" class="product-cta active">Open Bot →</a>
     </div>
 
-    <!-- PRODUCT 2: EXTENSION — WIP -->
+    <!-- 2: EXTENSION — WIP -->
     <div class="product wip reveal">
       <div class="status wip"><span class="sdot"></span> Work In Progress</div>
       <div class="product-icon">🔒</div>
       <div class="product-name">LSTP Extension</div>
       <div class="product-handle">Chrome · Edge · Brave · Firefox</div>
       <p class="product-desc">
-        A browser extension that intercepts crypto threats before they happen. It works silently in the background — blocking malicious downloads, detecting phishing sites, and protecting your wallet transactions automatically.
+        A browser extension that works silently in the background — blocking malicious downloads, detecting phishing sites, and protecting your wallet transactions before they happen.
         <br><br>
         <strong>Protection that runs before you even think to check.</strong>
       </p>
       <ul class="features">
-        <li><span class="wip-icon">⏳</span> APK download blocker</li>
-        <li><span class="wip-icon">⏳</span> Phishing site interceptor</li>
-        <li><span class="wip-icon">⏳</span> MetaMask / Phantom transaction guard</li>
-        <li><span class="wip-icon">⏳</span> Clipboard address protection</li>
-        <li><span class="wip-icon">⏳</span> Telegram Web link scanner</li>
-        <li><span class="wip-icon">⏳</span> Works on all major browsers</li>
+        <li><span class="icon wip-icon">⏳</span> APK download blocker</li>
+        <li><span class="icon wip-icon">⏳</span> Phishing site interceptor</li>
+        <li><span class="icon wip-icon">⏳</span> MetaMask / Phantom transaction guard</li>
+        <li><span class="icon wip-icon">⏳</span> Clipboard address protection</li>
+        <li><span class="icon wip-icon">⏳</span> Telegram Web link scanner</li>
+        <li><span class="icon wip-icon">⏳</span> Works on all major browsers</li>
       </ul>
-      <span class="product-cta soon">Coming Soon</span>
+      <span class="product-cta coming">Coming Soon</span>
+    </div>
+
+    <!-- 3: SCAMMER DB — COMING SOON -->
+    <div class="product soon reveal">
+      <div class="status soon"><span class="sdot"></span> Coming Soon</div>
+      <div class="product-icon">🚨</div>
+      <div class="product-name">Scammer DB</div>
+      <div class="product-handle">Community Powered · Blockchain Verified</div>
+      <p class="product-desc">
+        A community-powered scam database where every report is verified on-chain before flagging. When a scammer address is confirmed, we alert major exchanges to prevent cash out.
+        <br><br>
+        <strong>Turn victims into the last victims.</strong>
+      </p>
+      <ul class="features">
+        <li><span class="icon soon-icon">⏳</span> On-chain transaction verification</li>
+        <li><span class="icon soon-icon">⏳</span> Scammer wallet blacklist</li>
+        <li><span class="icon soon-icon">⏳</span> Automatic exchange alerts</li>
+        <li><span class="icon soon-icon">⏳</span> Evidence report generation</li>
+        <li><span class="icon soon-icon">⏳</span> Community voting system</li>
+        <li><span class="icon soon-icon">⏳</span> /scamcheck [address] command</li>
+      </ul>
+      <span class="product-cta coming">Coming Soon</span>
     </div>
 
   </div>
 </section>
 
-<hr class="divider">
+<hr class="div">
 
-<!-- ORIGIN -->
-<section class="origin reveal">
-  <p class="origin-label">Why We Built This</p>
-  <p class="origin-text">
-    Crypto scammers rely on one thing — <strong>an uninformed victim</strong>.<br><br>
-    They have mixers, anonymous wallets, and privacy coins.<br>
-    But they cannot operate without someone who trusts blindly.<br><br>
+<!-- WHY -->
+<section class="why reveal">
+  <p class="section-label">Why We Built This</p>
+  <br>
+  <p class="why-text">
+    Crypto scammers rely on one thing —
+    <strong>an uninformed victim.</strong>
+    <br><br>
+    They have mixers, anonymous wallets and privacy coins.
+    But they cannot operate without someone who trusts blindly.
+    <br><br>
     <strong>LSTP Protocol removes that trust gap.</strong><br>
     One check. Five seconds. Before you click, send, or swap.
   </p>
 </section>
 
-<hr class="divider">
+<hr class="div">
+
+<!-- HARDWARE WALLET RECOMMENDATION -->
+<section class="hardware reveal">
+  <p class="hardware-label">Our Recommendation</p>
+  <h3 class="hardware-title">Also Use A Hardware Wallet</h3>
+  <p class="hardware-sub">
+    LSTP protects you before a scam happens.
+    A hardware wallet protects you even if your private key is stolen.
+    Together — you're fully protected.
+  </p>
+  <div class="hw-links">
+    <a href="https://www.ledger.com" target="_blank" class="hw-btn">🔒 Ledger →</a>
+    <a href="https://www.trezor.io" target="_blank" class="hw-btn">🔒 Trezor →</a>
+  </div>
+  <p class="hw-note">We may earn a small commission from purchases · This helps keep LSTP free forever</p>
+</section>
 
 <!-- CTA -->
 <section class="cta-strip reveal">
   <h2 class="cta-title">START <span>PROTECTING</span><br>YOURSELF TODAY</h2>
-  <p class="cta-sub">Free forever. No signup required. Works on any device with Telegram.</p>
+  <p class="cta-sub">Free forever. No signup. Works on any device with Telegram.</p>
   <a href="https://t.me/LSTProtocolBot" target="_blank" class="btn-gold">🛡️ Open LSTP Bot</a>
   <div class="socials">
     <a href="https://t.me/LSTProtocol" target="_blank" class="social-link">Telegram</a>
@@ -704,13 +820,11 @@
 </footer>
 
 <script>
-  // Nav scroll
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 30);
   });
 
-  // Reveal on scroll
   const els = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver(entries => {
     entries.forEach((e, i) => {
