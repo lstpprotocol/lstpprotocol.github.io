@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LSTP Protocol — Trust Nothing Blindly</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,15 +11,15 @@
     :root {
       --black: #080808;
       --dark: #0f0f0f;
-      --card: #131313;
-      --border: #1e1e1e;
+      --card: #111111;
+      --border: #1a1a1a;
       --gold: #c9933a;
       --gold-light: #e8b45a;
-      --gold-dim: #8a6020;
+      --gold-dim: #6a4a18;
       --white: #f0ece4;
-      --grey: #888880;
-      --red: #c94040;
-      --green: #40a860;
+      --grey: #777770;
+      --green: #3a9e5f;
+      --blue: #3a6ea5;
     }
 
     html { scroll-behavior: smooth; }
@@ -30,18 +29,7 @@
       color: var(--white);
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
-      overflow-x: hidden;
-    }
-
-    /* ── NOISE OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.4;
+      min-height: 100vh;
     }
 
     /* ── NAV ── */
@@ -52,84 +40,110 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 48px;
+      padding: 18px 48px;
+      transition: background 0.3s, border-color 0.3s;
       border-bottom: 1px solid transparent;
-      transition: border-color 0.3s, background 0.3s;
     }
 
     nav.scrolled {
-      background: rgba(8,8,8,0.95);
+      background: rgba(8,8,8,0.96);
       border-color: var(--border);
       backdrop-filter: blur(12px);
     }
 
-    .nav-logo {
+    .logo {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 3px;
+      font-size: 20px;
+      letter-spacing: 4px;
       color: var(--gold);
       text-decoration: none;
     }
 
-    .nav-logo span { color: var(--white); }
+    .logo span { color: var(--white); }
 
-    .nav-cta {
+    .nav-btn {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--black);
       background: var(--gold);
-      padding: 10px 20px;
+      padding: 10px 22px;
       text-decoration: none;
-      transition: background 0.2s, transform 0.2s;
+      transition: background 0.2s;
     }
 
-    .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .nav-btn:hover { background: var(--gold-light); }
+
+    /* ── TICKER ── */
+    .ticker {
+      margin-top: 57px;
+      overflow: hidden;
+      background: var(--dark);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 0;
+      white-space: nowrap;
+    }
+
+    .ticker-track {
+      display: inline-block;
+      animation: scroll 28s linear infinite;
+    }
+
+    .ticker-track span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--grey);
+      padding: 0 28px;
+    }
+
+    .ticker-track span.hi { color: var(--gold); }
+
+    @keyframes scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
 
     /* ── HERO ── */
     .hero {
-      position: relative;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 120px 24px 80px;
+      padding: 100px 24px 80px;
+      position: relative;
       overflow: hidden;
     }
 
-    /* Gold radial glow behind hero */
-    .hero::after {
+    .hero::before {
       content: '';
       position: absolute;
-      top: 20%;
-      left: 50%;
+      top: 0; left: 50%;
       transform: translateX(-50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(ellipse, rgba(201,147,58,0.08) 0%, transparent 70%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(201,147,58,0.06) 0%, transparent 70%);
       pointer-events: none;
     }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+    .hero-eyebrow {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 2px;
+      font-size: 10px;
+      letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--gold);
       border: 1px solid var(--gold-dim);
-      padding: 8px 16px;
-      margin-bottom: 40px;
-      animation: fadeUp 0.8s ease both;
+      padding: 6px 16px;
+      margin-bottom: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      animation: up 0.7s ease both;
     }
 
-    .hero-badge::before {
-      content: '';
+    .dot {
       width: 6px; height: 6px;
       background: var(--gold);
       border-radius: 50%;
@@ -137,424 +151,385 @@
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.7); }
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.3; transform:scale(0.6); }
     }
 
     .hero-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(64px, 12vw, 160px);
-      line-height: 0.9;
-      letter-spacing: 4px;
+      font-size: clamp(72px, 13vw, 160px);
+      line-height: 0.88;
+      letter-spacing: 3px;
       color: var(--white);
-      animation: fadeUp 0.8s ease 0.1s both;
+      animation: up 0.7s ease 0.1s both;
       position: relative;
       z-index: 1;
     }
 
-    .hero-title .accent { color: var(--gold); }
+    .hero-title .gold { color: var(--gold); }
 
-    .hero-subtitle {
-      font-size: clamp(14px, 2vw, 18px);
-      font-weight: 300;
+    .hero-sub {
+      margin-top: 24px;
+      font-size: 16px;
       color: var(--grey);
-      max-width: 520px;
+      max-width: 480px;
       line-height: 1.8;
-      margin: 28px auto 0;
-      animation: fadeUp 0.8s ease 0.2s both;
+      animation: up 0.7s ease 0.2s both;
     }
 
-    .hero-subtitle strong {
-      color: var(--white);
-      font-weight: 500;
-    }
+    .hero-sub strong { color: var(--white); font-weight: 500; }
 
-    .hero-origin {
-      margin-top: 32px;
-      max-width: 560px;
+    .hero-quote {
+      margin-top: 24px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--gold-dim);
       line-height: 1.9;
       border-left: 2px solid var(--gold-dim);
       padding-left: 16px;
       text-align: left;
-      animation: fadeUp 0.8s ease 0.3s both;
+      max-width: 500px;
+      animation: up 0.7s ease 0.3s both;
     }
 
-    .hero-buttons {
+    .hero-btns {
+      margin-top: 40px;
       display: flex;
-      gap: 16px;
-      justify-content: center;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-top: 48px;
-      animation: fadeUp 0.8s ease 0.4s both;
+      justify-content: center;
+      animation: up 0.7s ease 0.4s both;
     }
 
-    .btn-primary {
+    .btn-gold {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--black);
       background: var(--gold);
-      padding: 16px 32px;
+      padding: 15px 30px;
       text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-      position: relative;
+      transition: background 0.2s, transform 0.2s;
     }
 
-    .btn-primary:hover {
-      background: var(--gold-light);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(201,147,58,0.3);
-    }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
 
-    .btn-secondary {
+    .btn-outline {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--gold);
-      background: transparent;
       border: 1px solid var(--gold-dim);
-      padding: 16px 32px;
+      padding: 15px 30px;
       text-decoration: none;
-      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+      transition: border-color 0.2s, transform 0.2s;
     }
 
-    .btn-secondary:hover {
-      border-color: var(--gold);
-      color: var(--gold-light);
-      transform: translateY(-2px);
+    .btn-outline:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+    @keyframes up {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    /* ── STATS STRIP ── */
-    .stats {
-      position: relative;
-      z-index: 1;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      overflow: hidden;
-      animation: fadeUp 0.8s ease 0.5s both;
-    }
-
-    .stat {
-      flex: 1;
-      max-width: 220px;
-      padding: 32px 24px;
-      text-align: center;
-      border-right: 1px solid var(--border);
-    }
-
-    .stat:last-child { border-right: none; }
-
-    .stat-number {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 42px;
-      color: var(--gold);
-      letter-spacing: 2px;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--grey);
-      margin-top: 6px;
-    }
-
-    /* ── FEATURES ── */
-    .features {
-      position: relative;
-      z-index: 1;
-      padding: 100px 48px;
-      max-width: 1200px;
+    /* ── PRODUCTS ── */
+    .products {
+      padding: 80px 48px;
+      max-width: 1100px;
       margin: 0 auto;
     }
 
-    .section-label {
+    .products-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--gold);
-      margin-bottom: 16px;
+      margin-bottom: 10px;
+      text-align: center;
     }
 
-    .section-title {
+    .products-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(40px, 6vw, 72px);
+      font-size: clamp(36px, 5vw, 60px);
       letter-spacing: 2px;
-      line-height: 1;
       color: var(--white);
-      margin-bottom: 64px;
+      text-align: center;
+      margin-bottom: 56px;
     }
 
-    .section-title span { color: var(--gold); }
+    .products-title span { color: var(--gold); }
 
-    .features-grid {
+    /* Side by side grid */
+    .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
     }
 
-    .feature-card {
+    @media (max-width: 700px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+
+    .product {
       background: var(--card);
-      padding: 40px 36px;
+      padding: 48px 40px;
       position: relative;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
       transition: background 0.3s;
     }
 
-    .feature-card::before {
+    .product:hover { background: #141414; }
+
+    /* Top accent line */
+    .product::after {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 2px;
-      background: var(--gold);
       transform: scaleX(0);
       transform-origin: left;
       transition: transform 0.4s ease;
     }
 
-    .feature-card:hover { background: #161616; }
-    .feature-card:hover::before { transform: scaleX(1); }
+    .product.live::after { background: var(--green); }
+    .product.wip::after  { background: var(--blue); }
+    .product:hover::after { transform: scaleX(1); }
 
-    .feature-icon {
-      font-size: 28px;
-      margin-bottom: 20px;
-      display: block;
+    /* Status pill */
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border: 1px solid;
+      margin-bottom: 28px;
+      width: fit-content;
     }
 
-    .feature-cmd {
+    .status.live {
+      color: var(--green);
+      border-color: rgba(58,158,95,0.25);
+      background: rgba(58,158,95,0.05);
+    }
+
+    .status.live .sdot { background: var(--green); animation: pulse 2s infinite; }
+
+    .status.wip {
+      color: var(--blue);
+      border-color: rgba(58,110,165,0.25);
+      background: rgba(58,110,165,0.05);
+    }
+
+    .status.wip .sdot { background: var(--blue); }
+
+    .sdot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+
+    .product-icon { font-size: 32px; margin-bottom: 16px; }
+
+    .product-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .product-handle {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       color: var(--gold);
       letter-spacing: 1px;
-      background: rgba(201,147,58,0.08);
-      display: inline-block;
-      padding: 4px 10px;
-      margin-bottom: 16px;
-      border: 1px solid rgba(201,147,58,0.2);
+      margin-bottom: 20px;
     }
 
-    .feature-title {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 500;
-      color: var(--white);
-      margin-bottom: 12px;
-    }
-
-    .feature-desc {
+    .product-desc {
       font-size: 14px;
       color: var(--grey);
-      line-height: 1.8;
+      line-height: 1.85;
+      margin-bottom: 32px;
+      flex: 1;
     }
 
-    /* ── HOW IT WORKS STRIP ── */
-    .how {
-      position: relative;
-      z-index: 1;
-      background: var(--dark);
+    .product-desc strong { color: var(--white); font-weight: 500; }
+
+    /* Feature list */
+    .features {
+      list-style: none;
+      margin-bottom: 36px;
       border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+
+    .features li {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--grey);
+      padding: 8px 0;
       border-bottom: 1px solid var(--border);
-      padding: 80px 48px;
-    }
-
-    .how-inner {
-      max-width: 1000px;
-      margin: 0 auto;
       display: flex;
-      flex-direction: column;
-      gap: 0;
+      align-items: center;
+      gap: 10px;
     }
 
-    .how-header {
-      text-align: center;
-      margin-bottom: 60px;
+    .features li:last-child { border-bottom: none; }
+    .features li .check { color: var(--gold); font-size: 12px; }
+    .features li .wip-icon { color: var(--blue); font-size: 11px; }
+
+    /* Product CTA */
+    .product-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 13px 24px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      transition: all 0.2s;
     }
 
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 0;
-      position: relative;
+    .product-cta.active {
+      color: var(--black);
+      background: var(--gold);
     }
 
-    .step {
-      padding: 32px 24px;
-      text-align: center;
-      position: relative;
+    .product-cta.active:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
     }
 
-    .step::after {
-      content: '→';
-      position: absolute;
-      right: -12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--gold-dim);
-      font-size: 20px;
+    .product-cta.soon {
+      color: var(--blue);
+      border: 1px solid rgba(58,110,165,0.3);
+      cursor: default;
+      opacity: 0.7;
     }
 
-    .step:last-child::after { display: none; }
-
-    .step-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 48px;
-      color: var(--border);
-      line-height: 1;
-      margin-bottom: 12px;
-    }
-
-    .step-title {
-      font-weight: 500;
-      color: var(--white);
-      margin-bottom: 8px;
-      font-size: 15px;
-    }
-
-    .step-desc {
-      font-size: 13px;
-      color: var(--grey);
-      line-height: 1.7;
-    }
-
-    /* ── SCAM TYPES STRIP ── */
-    .scams {
-      position: relative;
-      z-index: 1;
-      padding: 80px 48px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .scam-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 40px;
-    }
-
-    .scam-item {
-      border: 1px solid var(--border);
-      padding: 20px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      transition: border-color 0.2s;
-    }
-
-    .scam-item:hover { border-color: var(--gold-dim); }
-
-    .scam-dot {
-      width: 8px; height: 8px;
-      background: var(--red);
-      border-radius: 50%;
-      margin-top: 5px;
-      flex-shrink: 0;
-    }
-
-    .scam-text {
-      font-size: 13px;
-      color: var(--grey);
-      line-height: 1.6;
-    }
-
-    .scam-text strong { color: var(--white); font-weight: 500; display: block; margin-bottom: 2px; }
-
-    /* ── CTA SECTION ── */
-    .cta-section {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 100px 48px;
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
       border-top: 1px solid var(--border);
+      margin: 0 48px;
+    }
+
+    /* ── ORIGIN ── */
+    .origin {
+      padding: 80px 48px;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .origin-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .origin-text {
+      font-size: 16px;
+      color: var(--grey);
+      line-height: 1.9;
+    }
+
+    .origin-text strong { color: var(--white); font-weight: 500; }
+
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      border-top: 1px solid var(--border);
+      padding: 80px 48px;
+      text-align: center;
+      position: relative;
       overflow: hidden;
     }
 
-    .cta-section::before {
+    .cta-strip::before {
       content: '';
       position: absolute;
-      bottom: -200px;
-      left: 50%;
+      bottom: -150px; left: 50%;
       transform: translateX(-50%);
-      width: 800px;
-      height: 400px;
-      background: radial-gradient(ellipse, rgba(201,147,58,0.06) 0%, transparent 70%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(201,147,58,0.05) 0%, transparent 70%);
       pointer-events: none;
     }
 
     .cta-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(40px, 7vw, 80px);
+      font-size: clamp(36px, 6vw, 64px);
       letter-spacing: 3px;
       color: var(--white);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .cta-title span { color: var(--gold); }
 
     .cta-sub {
+      font-size: 14px;
       color: var(--grey);
-      font-size: 15px;
-      margin-bottom: 40px;
-      max-width: 440px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-bottom: 36px;
       line-height: 1.7;
     }
 
-    /* ── FOOTER ── */
-    footer {
-      position: relative;
-      z-index: 1;
-      border-top: 1px solid var(--border);
-      padding: 32px 48px;
+    .socials {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 20px;
       flex-wrap: wrap;
-      gap: 16px;
+      margin-top: 28px;
     }
 
-    .footer-logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 18px;
-      letter-spacing: 3px;
-      color: var(--gold);
-    }
-
-    .footer-logo span { color: var(--grey); }
-
-    .footer-links {
-      display: flex;
-      gap: 24px;
-    }
-
-    .footer-links a {
+    .social-link {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--grey);
       text-decoration: none;
-      transition: color 0.2s;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      transition: color 0.2s, border-color 0.2s;
     }
 
-    .footer-links a:hover { color: var(--gold); }
+    .social-link:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 3px;
+      color: var(--gold);
+    }
+
+    .footer-logo span { color: var(--grey); }
 
     .footer-copy {
       font-family: 'JetBrains Mono', monospace;
@@ -563,281 +538,190 @@
       letter-spacing: 1px;
     }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
+    /* ── REVEAL ── */
     .reveal {
       opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
 
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ── TICKER TAPE ── */
-    .ticker {
-      overflow: hidden;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      background: var(--dark);
-      padding: 12px 0;
-      white-space: nowrap;
-    }
-
-    .ticker-inner {
-      display: inline-block;
-      animation: ticker 30s linear infinite;
-    }
-
-    .ticker-inner span {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--grey);
-      padding: 0 32px;
-    }
-
-    .ticker-inner span.warn {
-      color: var(--gold);
-    }
-
-    @keyframes ticker {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
+    .reveal.on { opacity: 1; transform: none; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       nav { padding: 16px 24px; }
-      .features { padding: 60px 24px; }
-      .how { padding: 60px 24px; }
-      .scams { padding: 60px 24px; }
-      .cta-section { padding: 60px 24px; }
-      footer { padding: 24px; flex-direction: column; align-items: flex-start; }
-      .stat { padding: 24px 16px; }
-      .step::after { display: none; }
+      .products { padding: 60px 20px; }
+      .product { padding: 36px 28px; }
+      .origin { padding: 60px 24px; }
+      .cta-strip { padding: 60px 24px; }
+      footer { padding: 20px 24px; flex-direction: column; }
+      .divider { margin: 0 24px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav id="nav">
-    <a href="#" class="nav-logo">LSTP<span> PROTOCOL</span></a>
-    <a href="https://t.me/LSTProtocolBot" target="_blank" class="nav-cta">Open Bot →</a>
-  </nav>
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="logo">LSTP<span> PROTOCOL</span></a>
+  <a href="https://t.me/LSTProtocolBot" target="_blank" class="nav-btn">Try Bot Free →</a>
+</nav>
 
-  <!-- TICKER -->
-  <div class="ticker">
-    <div class="ticker-inner">
-      <span class="warn">⚠ $62M lost to address poisoning in 2026</span>
-      <span>→</span>
-      <span>Never copy addresses from Telegram</span>
-      <span>→</span>
-      <span class="warn">APK files drain wallets instantly</span>
-      <span>→</span>
-      <span>Always verify contracts on CoinGecko</span>
-      <span>→</span>
-      <span class="warn">Fake groups impersonate real projects</span>
-      <span>→</span>
-      <span>Check before you swap</span>
-      <span>→</span>
-      <span class="warn">⚠ $62M lost to address poisoning in 2026</span>
-      <span>→</span>
-      <span>Never copy addresses from Telegram</span>
-      <span>→</span>
-      <span>Always verify contracts on CoinGecko</span>
-      <span>→</span>
-      <span class="warn">APK files drain wallets instantly</span>
-      <span>→</span>
-      <span>Check before you swap</span>
-      <span>→</span>
-    </div>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="hi">⚠ Never copy wallet addresses from Telegram</span>
+    <span>·</span>
+    <span>Check before you swap</span>
+    <span>·</span>
+    <span class="hi">APK files drain wallets instantly</span>
+    <span>·</span>
+    <span>Verify contracts before investing</span>
+    <span>·</span>
+    <span class="hi">Fake groups impersonate real projects</span>
+    <span>·</span>
+    <span>Trust nothing blindly</span>
+    <span>·</span>
+    <span class="hi">⚠ Never copy wallet addresses from Telegram</span>
+    <span>·</span>
+    <span>Check before you swap</span>
+    <span>·</span>
+    <span class="hi">APK files drain wallets instantly</span>
+    <span>·</span>
+    <span>Verify contracts before investing</span>
+    <span>·</span>
+    <span class="hi">Fake groups impersonate real projects</span>
+    <span>·</span>
+    <span>Trust nothing blindly</span>
+    <span>·</span>
   </div>
+</div>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-badge">Built by a scam victim · For every crypto user</div>
-
-    <h1 class="hero-title">
-      TRUST<br>
-      <span class="accent">NOTHING</span><br>
-      BLINDLY
-    </h1>
-
-    <p class="hero-subtitle">
-      LSTP Protocol is a <strong>free crypto safety tool</strong> that checks tokens, wallet addresses, links, and Telegram groups — before you lose your money.
-    </p>
-
-    <p class="hero-origin">
-      "I lost $5,000 USDT to a malicious APK via Telegram in 2024.<br>
-      My Phantom wallet was drained. Nobody warned me.<br>
-      So I built the weapon myself."
-    </p>
-
-    <div class="hero-buttons">
-      <a href="https://t.me/LSTProtocolBot" target="_blank" class="btn-primary">
-        🛡️ Join The Community
-      </a>
-      <a href="#features" class="btn-secondary">See Features</a>
-    </div>
-  </section>
-
-  <!-- STATS -->
-  <div class="stats reveal">
-    <div class="stat">
-      <div class="stat-number">$62M</div>
-      <div class="stat-label">Lost to address poisoning in 2026</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">6</div>
-      <div class="stat-label">Protection commands</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">FREE</div>
-      <div class="stat-label">Always. No subscription.</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">24/7</div>
-      <div class="stat-label">Bot protection on Telegram</div>
-    </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><span class="dot"></span> Built by a scam victim · For every crypto user</div>
+  <h1 class="hero-title">TRUST<br><span class="gold">NOTHING</span><br>BLINDLY</h1>
+  <p class="hero-sub">
+    A <strong>free crypto security suite</strong> that checks tokens, wallet addresses, phishing links and fake groups — before you lose your money.
+  </p>
+  <p class="hero-quote">
+    "I lost $5,000 USDT to a malicious APK via Telegram in 2024.<br>
+    My wallet was drained in minutes. Nobody warned me.<br>
+    So I built the weapon myself."
+  </p>
+  <div class="hero-btns">
+    <a href="https://t.me/LSTProtocolBot" target="_blank" class="btn-gold">🛡️ Try LSTP Bot Free</a>
+    <a href="#products" class="btn-outline">See Products ↓</a>
   </div>
+</section>
 
-  <!-- FEATURES -->
-  <section class="features" id="features">
-    <p class="section-label reveal">What We Protect You From</p>
-    <h2 class="section-title reveal">YOUR <span>SHIELD</span><br>IN CRYPTO</h2>
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <p class="products-label reveal">What We're Building</p>
+  <h2 class="products-title reveal">OUR <span>PRODUCTS</span></h2>
 
-    <div class="features-grid">
+  <div class="products-grid">
 
-      <div class="feature-card reveal">
-        <span class="feature-icon">🔍</span>
-        <span class="feature-cmd">/check [token]</span>
-        <h3 class="feature-title">Token Safety Score</h3>
-        <p class="feature-desc">AI-powered safety analysis with a verified score out of 100. Pulls real data from CoinGecko and DexScreener. If multiple tokens share a name, we show each contract so you pick the right one.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <span class="feature-icon">⛓️</span>
-        <span class="feature-cmd">/check → 🔗 Token Links</span>
-        <h3 class="feature-title">Verified Contract Address</h3>
-        <p class="feature-desc">We fetch the verified contract address, website, Telegram, and Twitter directly from CoinGecko. Never copy a contract from a Telegram message — always verify with us first.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <span class="feature-icon">👥</span>
-        <span class="feature-cmd">/checkgroup @username</span>
-        <h3 class="feature-title">Fake Group Detection</h3>
-        <p class="feature-desc">Scammers create fake Telegram groups impersonating real projects. We check if a group is verified by Telegram, flagged as scam, and analyse the username for impersonation patterns.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <span class="feature-icon">🔗</span>
-        <span class="feature-cmd">/link [url]</span>
-        <h3 class="feature-title">Phishing Link Scanner</h3>
-        <p class="feature-desc">Before you click any crypto link, run it through us. We detect typosquatting, fake domains, APK download attempts, and known phishing patterns. One scan could save your entire wallet.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <span class="feature-icon">📍</span>
-        <span class="feature-cmd">/address [wallet]</span>
-        <h3 class="feature-title">Address Poisoning Check</h3>
-        <p class="feature-desc">Address poisoning is one of the fastest growing scams — $62M lost in 2026 alone. Scammers send tiny transactions from lookalike addresses hoping you copy the wrong one. We catch them.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <span class="feature-icon">📢</span>
-        <span class="feature-cmd">/report</span>
-        <h3 class="feature-title">Community Scam Reports</h3>
-        <p class="feature-desc">Spotted a scam? Report it and protect the entire community. Every report feeds into our growing database. The more people report, the smarter our protection gets.</p>
-      </div>
-
+    <!-- PRODUCT 1: BOT — LIVE -->
+    <div class="product live reveal">
+      <div class="status live"><span class="sdot"></span> Live Now</div>
+      <div class="product-icon">🤖</div>
+      <div class="product-name">LSTP Bot</div>
+      <div class="product-handle">@LSTProtocolBot on Telegram</div>
+      <p class="product-desc">
+        A free Telegram bot that protects you at every step of a crypto transaction. Check any token, wallet address, link or group — and get an instant safety score powered by real blockchain data and AI.
+        <br><br>
+        <strong>No signup. No wallet connection. Just type a command.</strong>
+      </p>
+      <ul class="features">
+        <li><span class="check">→</span> /check [token] — Safety score + verified contracts</li>
+        <li><span class="check">→</span> /checkgroup @name — Fake group detection</li>
+        <li><span class="check">→</span> /address [wallet] — Address poisoning check</li>
+        <li><span class="check">→</span> /link [url] — Phishing link scanner</li>
+        <li><span class="check">→</span> /report — Report a scam to community</li>
+        <li><span class="check">→</span> Data from CoinGecko + DexScreener</li>
+      </ul>
+      <a href="https://t.me/LSTProtocolBot" target="_blank" class="product-cta active">Open Bot →</a>
     </div>
-  </section>
 
-  <!-- SCAM TYPES -->
-  <section class="scams">
-    <p class="section-label reveal">What We Protect You From</p>
-    <h2 class="section-title reveal">KNOWN <span>SCAM</span> TYPES</h2>
-    <div class="scam-list">
-      <div class="scam-item reveal">
-        <div class="scam-dot"></div>
-        <div class="scam-text"><strong>Malicious APK Files</strong>Fake wallet apps distributed via Telegram that drain your crypto instantly.</div>
-      </div>
-      <div class="scam-item reveal">
-        <div class="scam-dot"></div>
-        <div class="scam-text"><strong>Address Poisoning</strong>Lookalike wallet addresses sent to trick you into copying the wrong one.</div>
-      </div>
-      <div class="scam-item reveal">
-        <div class="scam-dot"></div>
-        <div class="scam-text"><strong>Fake Telegram Groups</strong>Impersonating official project channels to steal funds or credentials.</div>
-      </div>
-      <div class="scam-item reveal">
-        <div class="scam-dot"></div>
-        <div class="scam-text"><strong>Phishing Websites</strong>Typosquatted domains that look identical to real crypto platforms.</div>
-      </div>
-      <div class="scam-item reveal">
-        <div class="scam-dot"></div>
-        <div class="scam-text"><strong>Rug Pulls</strong>Tokens with no verified contracts, anonymous teams, and zero liquidity.</div>
-      </div>
-      <div class="scam-item reveal">
-        <div class="scam-dot"></div>
-        <div class="scam-text"><strong>Token Impersonation</strong>Fake tokens sharing names with legitimate projects to trick investors.</div>
-      </div>
+    <!-- PRODUCT 2: EXTENSION — WIP -->
+    <div class="product wip reveal">
+      <div class="status wip"><span class="sdot"></span> Work In Progress</div>
+      <div class="product-icon">🔒</div>
+      <div class="product-name">LSTP Extension</div>
+      <div class="product-handle">Chrome · Edge · Brave · Firefox</div>
+      <p class="product-desc">
+        A browser extension that intercepts crypto threats before they happen. It works silently in the background — blocking malicious downloads, detecting phishing sites, and protecting your wallet transactions automatically.
+        <br><br>
+        <strong>Protection that runs before you even think to check.</strong>
+      </p>
+      <ul class="features">
+        <li><span class="wip-icon">⏳</span> APK download blocker</li>
+        <li><span class="wip-icon">⏳</span> Phishing site interceptor</li>
+        <li><span class="wip-icon">⏳</span> MetaMask / Phantom transaction guard</li>
+        <li><span class="wip-icon">⏳</span> Clipboard address protection</li>
+        <li><span class="wip-icon">⏳</span> Telegram Web link scanner</li>
+        <li><span class="wip-icon">⏳</span> Works on all major browsers</li>
+      </ul>
+      <span class="product-cta soon">Coming Soon</span>
     </div>
-  </section>
 
-  <!-- CTA -->
-  <section class="cta-section">
-    <h2 class="cta-title reveal">START <span>PROTECTING</span><br>YOURSELF TODAY</h2>
-    <p class="cta-sub reveal">Free. No signup. No wallet connection. Just type a command and stay safe.</p>
-    <div class="reveal">
-      <a href="https://t.me/LSTProtocolBot" target="_blank" class="btn-primary">
-        🛡️ Join The Community
-      </a>
-    </div>
-    <p style="margin-top: 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--grey); letter-spacing: 1px;" class="reveal">
-      t.me/LSTProtocol &nbsp;·&nbsp; @LSTProtocolBot
-    </p>
-  </section>
+  </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-logo">LSTP<span> PROTOCOL</span></div>
-    <div class="footer-links">
-      <a href="https://t.me/LSTProtocol" target="_blank">Telegram</a>
-      <a href="https://t.me/LSTProtocolBot" target="_blank">Bot</a>
-      <a href="https://reddit.com/u/StopCryptoScams" target="_blank">Reddit</a>
-    </div>
-    <div class="footer-copy">© 2026 LSTP PROTOCOL · TRUST NOTHING BLINDLY</div>
-  </footer>
+<hr class="divider">
 
-  <script>
-    // Nav scroll effect
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 40);
+<!-- ORIGIN -->
+<section class="origin reveal">
+  <p class="origin-label">Why We Built This</p>
+  <p class="origin-text">
+    Crypto scammers rely on one thing — <strong>an uninformed victim</strong>.<br><br>
+    They have mixers, anonymous wallets, and privacy coins.<br>
+    But they cannot operate without someone who trusts blindly.<br><br>
+    <strong>LSTP Protocol removes that trust gap.</strong><br>
+    One check. Five seconds. Before you click, send, or swap.
+  </p>
+</section>
+
+<hr class="divider">
+
+<!-- CTA -->
+<section class="cta-strip reveal">
+  <h2 class="cta-title">START <span>PROTECTING</span><br>YOURSELF TODAY</h2>
+  <p class="cta-sub">Free forever. No signup required. Works on any device with Telegram.</p>
+  <a href="https://t.me/LSTProtocolBot" target="_blank" class="btn-gold">🛡️ Open LSTP Bot</a>
+  <div class="socials">
+    <a href="https://t.me/LSTProtocol" target="_blank" class="social-link">Telegram</a>
+    <a href="https://twitter.com/StopCryptoScams" target="_blank" class="social-link">Twitter</a>
+    <a href="https://reddit.com/u/StopCryptoScams" target="_blank" class="social-link">Reddit</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">LSTP<span> PROTOCOL</span></div>
+  <div class="footer-copy">© 2026 LSTP PROTOCOL · TRUST NOTHING BLINDLY</div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  // Reveal on scroll
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('on'), i * 80);
+        io.unobserve(e.target);
+      }
     });
-
-    // Reveal on scroll
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 60);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    reveals.forEach(el => observer.observe(el));
-  </script>
+  }, { threshold: 0.1 });
+  els.forEach(el => io.observe(el));
+</script>
 
 </body>
 </html>
