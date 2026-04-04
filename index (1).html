@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LSTP Protocol — Trust Nothing Blindly</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8MFPEKEE24"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-8MFPEKEE24');
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #080808;
+      --dark: #0f0f0f;
+      --card: #111111;
+      --border: #1a1a1a;
+      --gold: #c9933a;
+      --gold-light: #e8b45a;
+      --gold-dim: #6a4a18;
+      --white: #f0ece4;
+      --grey: #777770;
+      --green: #3a9e5f;
+      --blue: #3a6ea5;
+      --red: #9e3a3a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      transition: background 0.3s, border-color 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+
+    nav.scrolled {
+      background: rgba(8,8,8,0.96);
+      border-color: var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .logo span { color: var(--white); }
+
+    .nav-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      padding: 10px 22px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .nav-btn:hover { background: var(--gold-light); }
+
+    /* ── TICKER ── */
+    .ticker {
+      margin-top: 57px;
+      overflow: hidden;
+      background: var(--dark);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 0;
+      white-space: nowrap;
+    }
+
+    .ticker-track {
+      display: inline-block;
+      animation: scroll 30s linear infinite;
+    }
+
+    .ticker-track span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--grey);
+      padding: 0 28px;
+    }
+
+    .ticker-track span.hi { color: var(--gold); }
+
+    @keyframes scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(201,147,58,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 6px 16px;
+      margin-bottom: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      animation: up 0.7s ease both;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.3; transform:scale(0.6); }
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 13vw, 160px);
+      line-height: 0.88;
+      letter-spacing: 3px;
+      color: var(--white);
+      animation: up 0.7s ease 0.1s both;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title .gold { color: var(--gold); }
+
+    .hero-sub {
+      margin-top: 24px;
+      font-size: 16px;
+      color: var(--grey);
+      max-width: 480px;
+      line-height: 1.8;
+      animation: up 0.7s ease 0.2s both;
+    }
+
+    .hero-sub strong { color: var(--white); font-weight: 500; }
+
+    .hero-quote {
+      margin-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gold-dim);
+      line-height: 1.9;
+      border-left: 2px solid var(--gold-dim);
+      padding-left: 16px;
+      text-align: left;
+      max-width: 500px;
+      animation: up 0.7s ease 0.3s both;
+    }
+
+    .hero-btns {
+      margin-top: 40px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: up 0.7s ease 0.4s both;
+    }
+
+    .btn-gold {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      padding: 15px 30px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+    .btn-outline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 15px 30px;
+      text-decoration: none;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .btn-outline:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+    @keyframes up {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── PRODUCTS ── */
+    .products {
+      padding: 80px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 5vw, 60px);
+      letter-spacing: 2px;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .section-title span { color: var(--gold); }
+
+    /* Three column grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 900px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+
+    .product {
+      background: var(--card);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s;
+    }
+
+    .product:hover { background: #141414; }
+
+    .product::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .product.live::after  { background: var(--green); }
+    .product.wip::after   { background: var(--blue); }
+    .product.soon::after  { background: var(--red); }
+    .product:hover::after { transform: scaleX(1); }
+
+    /* Status badge */
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border: 1px solid;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    .status.live {
+      color: var(--green);
+      border-color: rgba(58,158,95,0.25);
+      background: rgba(58,158,95,0.05);
+    }
+
+    .status.live .sdot {
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    .status.wip {
+      color: var(--blue);
+      border-color: rgba(58,110,165,0.25);
+      background: rgba(58,110,165,0.05);
+    }
+
+    .status.wip .sdot { background: var(--blue); }
+
+    .status.soon {
+      color: var(--red);
+      border-color: rgba(158,58,58,0.25);
+      background: rgba(158,58,58,0.05);
+    }
+
+    .status.soon .sdot { background: var(--red); }
+
+    .sdot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+
+    .product-icon { font-size: 30px; margin-bottom: 14px; }
+
+    .product-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .product-handle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+    }
+
+    .product-desc {
+      font-size: 13px;
+      color: var(--grey);
+      line-height: 1.85;
+      margin-bottom: 28px;
+      flex: 1;
+    }
+
+    .product-desc strong { color: var(--white); font-weight: 500; }
+
+    /* Feature list */
+    .features {
+      list-style: none;
+      margin-bottom: 32px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    .features li {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--grey);
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.5;
+    }
+
+    .features li:last-child { border-bottom: none; }
+    .features li .icon { flex-shrink: 0; margin-top: 1px; }
+    .live-icon  { color: var(--green); }
+    .wip-icon   { color: var(--blue); }
+    .soon-icon  { color: var(--red); }
+
+    /* CTA button */
+    .product-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 12px 22px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      transition: all 0.2s;
+    }
+
+    .product-cta.active {
+      color: var(--black);
+      background: var(--gold);
+    }
+
+    .product-cta.active:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    .product-cta.coming {
+      color: var(--grey);
+      border: 1px solid var(--border);
+      cursor: default;
+    }
+
+    /* ── DIVIDER ── */
+    hr.div {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0 48px;
+    }
+
+    /* ── WHY SECTION ── */
+    .why {
+      padding: 80px 48px;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .why-text {
+      font-size: 15px;
+      color: var(--grey);
+      line-height: 1.95;
+    }
+
+    .why-text strong { color: var(--white); font-weight: 500; }
+
+    /* ── HARDWARE CTA ── */
+    .hardware {
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 48px;
+      text-align: center;
+    }
+
+    .hardware-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .hardware-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .hardware-sub {
+      font-size: 13px;
+      color: var(--grey);
+      max-width: 500px;
+      margin: 0 auto 28px;
+      line-height: 1.7;
+    }
+
+    .hw-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hw-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      text-decoration: none;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+      transition: all 0.2s;
+    }
+
+    .hw-btn:hover {
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
+    }
+
+    .hw-note {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--grey);
+      letter-spacing: 1px;
+      margin-top: 14px;
+      opacity: 0.6;
+    }
+
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      padding: 80px 48px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-strip::before {
+      content: '';
+      position: absolute;
+      bottom: -150px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(201,147,58,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 6vw, 64px);
+      letter-spacing: 3px;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .cta-title span { color: var(--gold); }
+
+    .cta-sub {
+      font-size: 14px;
+      color: var(--grey);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .social-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--grey);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .social-link:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 3px;
+      color: var(--gold);
+    }
+
+    .footer-logo span { color: var(--grey); }
+
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--border);
+      letter-spacing: 1px;
+    }
+
+    /* ── REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.on { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .products { padding: 60px 20px; }
+      .product { padding: 32px 24px; }
+      .why { padding: 60px 24px; }
+      .hardware { padding: 48px 24px; }
+      .cta-strip { padding: 60px 24px; }
+      footer { padding: 20px 24px; flex-direction: column; }
+      hr.div { margin: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="logo">LSTP<span> PROTOCOL</span></a>
+  <a href="https://t.me/LSTProtocolBot" target="_blank" class="nav-btn">Try Bot Free →</a>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="hi">⚠ Never copy wallet addresses from Telegram</span>
+    <span>·</span>
+    <span>Check before you swap</span>
+    <span>·</span>
+    <span class="hi">APK files drain wallets instantly</span>
+    <span>·</span>
+    <span>Verify contracts before investing</span>
+    <span>·</span>
+    <span class="hi">Fake groups impersonate real projects</span>
+    <span>·</span>
+    <span>Trust nothing blindly</span>
+    <span>·</span>
+    <span class="hi">⚠ Never copy wallet addresses from Telegram</span>
+    <span>·</span>
+    <span>Check before you swap</span>
+    <span>·</span>
+    <span class="hi">APK files drain wallets instantly</span>
+    <span>·</span>
+    <span>Verify contracts before investing</span>
+    <span>·</span>
+    <span class="hi">Fake groups impersonate real projects</span>
+    <span>·</span>
+    <span>Trust nothing blindly</span>
+    <span>·</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><span class="dot"></span> Built by a scam victim · For every crypto user</div>
+  <h1 class="hero-title">TRUST<br><span class="gold">NOTHING</span><br>BLINDLY</h1>
+  <p class="hero-sub">
+    A <strong>free crypto security suite</strong> that checks tokens, wallet addresses, phishing links and fake groups — before you lose your money.
+  </p>
+  <p class="hero-quote">
+    "I lost $5,000 USDT to a malicious APK via Telegram in 2024.<br>
+    My wallet was drained in minutes. Nobody warned me.<br>
+    So I built the weapon myself."
+  </p>
+  <div class="hero-btns">
+    <a href="https://t.me/LSTProtocolBot" target="_blank" class="btn-gold">🛡️ Try LSTP Bot Free</a>
+    <a href="#products" class="btn-outline">See Products ↓</a>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <p class="section-label reveal">What We're Building</p>
+  <h2 class="section-title reveal">OUR <span>PRODUCTS</span></h2>
+
+  <div class="products-grid">
+
+    <!-- 1: BOT — LIVE -->
+    <div class="product live reveal">
+      <div class="status live"><span class="sdot"></span> Live Now</div>
+      <div class="product-icon">🤖</div>
+      <div class="product-name">LSTP Bot</div>
+      <div class="product-handle">@LSTProtocolBot on Telegram</div>
+      <p class="product-desc">
+        A free Telegram bot that gives you an instant safety score on any crypto token, wallet address, link or group — powered by real blockchain data and AI analysis.
+        <br><br>
+        <strong>No signup. No wallet connection. Just type a command.</strong>
+      </p>
+      <ul class="features">
+        <li><span class="icon live-icon">→</span> Token safety score out of 100</li>
+        <li><span class="icon live-icon">→</span> Verified contract addresses</li>
+        <li><span class="icon live-icon">→</span> Fake Telegram group detection</li>
+        <li><span class="icon live-icon">→</span> Phishing link scanner</li>
+        <li><span class="icon live-icon">→</span> Wallet address poisoning check</li>
+        <li><span class="icon live-icon">→</span> Data from CoinGecko + DexScreener</li>
+      </ul>
+      <a href="https://t.me/LSTProtocolBot" target="_blank" class="product-cta active">Open Bot →</a>
+    </div>
+
+    <!-- 2: EXTENSION — WIP -->
+    <div class="product wip reveal">
+      <div class="status wip"><span class="sdot"></span> Work In Progress</div>
+      <div class="product-icon">🔒</div>
+      <div class="product-name">LSTP Extension</div>
+      <div class="product-handle">Chrome · Edge · Brave · Firefox</div>
+      <p class="product-desc">
+        A browser extension that works silently in the background — blocking malicious downloads, detecting phishing sites, and protecting your wallet transactions before they happen.
+        <br><br>
+        <strong>Protection that runs before you even think to check.</strong>
+      </p>
+      <ul class="features">
+        <li><span class="icon wip-icon">⏳</span> APK download blocker</li>
+        <li><span class="icon wip-icon">⏳</span> Phishing site interceptor</li>
+        <li><span class="icon wip-icon">⏳</span> MetaMask / Phantom transaction guard</li>
+        <li><span class="icon wip-icon">⏳</span> Clipboard address protection</li>
+        <li><span class="icon wip-icon">⏳</span> Telegram Web link scanner</li>
+        <li><span class="icon wip-icon">⏳</span> Works on all major browsers</li>
+      </ul>
+      <span class="product-cta coming">Coming Soon</span>
+    </div>
+
+    <!-- 3: SCAMMER DB — COMING SOON -->
+    <div class="product soon reveal">
+      <div class="status soon"><span class="sdot"></span> Coming Soon</div>
+      <div class="product-icon">🚨</div>
+      <div class="product-name">Scammer DB</div>
+      <div class="product-handle">Community Powered · Blockchain Verified</div>
+      <p class="product-desc">
+        A community-powered scam database where every report is verified on-chain before flagging. When a scammer address is confirmed, we alert major exchanges to prevent cash out.
+        <br><br>
+        <strong>Turn victims into the last victims.</strong>
+      </p>
+      <ul class="features">
+        <li><span class="icon soon-icon">⏳</span> On-chain transaction verification</li>
+        <li><span class="icon soon-icon">⏳</span> Scammer wallet blacklist</li>
+        <li><span class="icon soon-icon">⏳</span> Automatic exchange alerts</li>
+        <li><span class="icon soon-icon">⏳</span> Evidence report generation</li>
+        <li><span class="icon soon-icon">⏳</span> Community voting system</li>
+        <li><span class="icon soon-icon">⏳</span> /scamcheck [address] command</li>
+      </ul>
+      <span class="product-cta coming">Coming Soon</span>
+    </div>
+
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- WHY -->
+<section class="why reveal">
+  <p class="section-label">Why We Built This</p>
+  <br>
+  <p class="why-text">
+    Crypto scammers rely on one thing —
+    <strong>an uninformed victim.</strong>
+    <br><br>
+    They have mixers, anonymous wallets and privacy coins.
+    But they cannot operate without someone who trusts blindly.
+    <br><br>
+    <strong>LSTP Protocol removes that trust gap.</strong><br>
+    One check. Five seconds. Before you click, send, or swap.
+  </p>
+</section>
+
+<hr class="div">
+
+<!-- HARDWARE WALLET RECOMMENDATION -->
+<section class="hardware reveal">
+  <p class="hardware-label">Our Recommendation</p>
+  <h3 class="hardware-title">Also Use A Hardware Wallet</h3>
+  <p class="hardware-sub">
+    LSTP protects you before a scam happens.
+    A hardware wallet protects you even if your private key is stolen.
+    Together — you're fully protected.
+  </p>
+  <div class="hw-links">
+    <a href="https://shop.ledger.com/?r=ca50aa8814df" target="_blank" class="hw-btn">🔒 Ledger →</a>
+    <a href="https://affiliate.trezor.io/signup/135496" target="_blank" class="hw-btn">🔒 Trezor →</a>
+  </div>
+  <p class="hw-note">We may earn a small commission from purchases · This helps keep LSTP free forever</p>
+</section>
+
+<!-- CTA -->
+<section class="cta-strip reveal">
+  <h2 class="cta-title">START <span>PROTECTING</span><br>YOURSELF TODAY</h2>
+  <p class="cta-sub">Free forever. No signup. Works on any device with Telegram.</p>
+  <a href="https://t.me/LSTProtocolBot" target="_blank" class="btn-gold">🛡️ Open LSTP Bot</a>
+  <div class="socials">
+    <a href="https://t.me/LSTProtocol" target="_blank" class="social-link">Telegram</a>
+    <a href="https://twitter.com/StopCryptoScams" target="_blank" class="social-link">Twitter</a>
+    <a href="https://reddit.com/u/StopCryptoScams" target="_blank" class="social-link">Reddit</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">LSTP<span> PROTOCOL</span></div>
+  <div class="footer-copy">© 2026 LSTP PROTOCOL · TRUST NOTHING BLINDLY</div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('on'), i * 80);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
